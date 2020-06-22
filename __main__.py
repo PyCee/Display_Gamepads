@@ -4,7 +4,7 @@ import pygame
 root = tkinter.Tk()
 
 TITLE = "Display Gamepads"
-WIDTH = 325
+WIDTH = 600
 HEIGHT = 400
 
 root.title(TITLE)
@@ -29,7 +29,7 @@ def update_joystick(name):
     for j in joysticks:
         if j.get_name() == name:
             joystick = j
-            set_boxes()
+            reset_boxes()
             break
 
 dropdown = tkinter.OptionMenu(root, selected_joystick_name,
@@ -39,6 +39,7 @@ dropdown.place(x=20, y=10)
 
 digital_inputs = []
 analog_inputs = []
+hat_inputs = []
 
 class Value(tkinter.Label):
     def __init__(self, master, text, horizontal, vertical):
@@ -50,15 +51,19 @@ class Value(tkinter.Label):
     def Set(self, value):
         self.v.set(self.text + value)
         
-def set_boxes():
+def reset_boxes():
     global digital_inputs
     global analog_inputs
+    global hat_inputs
     for i in range(len(digital_inputs)):
         digital_inputs[i].destroy()
     for i in range(len(analog_inputs)):
         analog_inputs[i].destroy()
+    for i in range(len(hat_inputs)):
+        hat_inputs[i].destroy()
     digital_inputs = []
     analog_inputs = []
+    hat_inputs = []
     for i in range(joystick.get_numbuttons()):
         y = 60 + i * 20
         v = Value(root, "Digital Input " + str(i) + ": ", 20, y)
@@ -69,15 +74,25 @@ def set_boxes():
         v = Value(root, "Analog Input " + str(i) + ": ", 160, y)
         v.Set("0.0")
         analog_inputs.append(v)
+    for i in range(joystick.get_numhats()):
+        y = 60 + i * 20
+        v = Value(root, "Hat Input " + str(i) + ": ", 320, y)
+        v.Set("0.0")
+        hat_inputs.append(v)
 def update_inputs():
     pygame.event.pump()
-    for i in range(joystick.get_numbuttons()):
+    for i in range(len(digital_inputs)):
         digital_inputs[i].Set(str(joystick.get_button(i)))
-    for i in range(joystick.get_numaxes()):
-        analog_inputs[i].Set(str(round(joystick.get_axis(i), 3)))
+    for i in range(len(analog_inputs)):
+        val = joystick.get_axis(i)
+        if val != 0.0:
+            analog_inputs[i].Set(str(round(val, 3)))
+    for i in range(len(hat_inputs)):
+        val = joystick.get_hat(i)
+        hat_inputs[i].Set(str(val))
     root.after(30, update_inputs)
 
-set_boxes()
+reset_boxes()
 
 root.after(30, update_inputs)
 root.mainloop()
