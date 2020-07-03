@@ -61,22 +61,25 @@ def reset_boxes():
         analog_inputs[i].destroy()
     for i in range(len(hat_inputs)):
         hat_inputs[i].destroy()
+    digital = Value(root, "Digital Inputs", 20, 60)
+    digital = Value(root, "Analog Inputs", 160, 60)
+    digital = Value(root, "Hat Inputs", 320, 60)
     digital_inputs = []
     analog_inputs = []
     hat_inputs = []
     for i in range(joystick.get_numbuttons()):
-        y = 60 + i * 20
-        v = Value(root, "Digital Input " + str(i) + ": ", 20, y)
+        y = 90 + i * 20
+        v = Value(root, "Index " + str(i) + ": ", 20, y)
         v.Set("false")
         digital_inputs.append(v)
     for i in range(joystick.get_numaxes()):
-        y = 60 + i * 20
-        v = Value(root, "Analog Input " + str(i) + ": ", 160, y)
+        y = 90 + i * 20
+        v = Value(root, "Index " + str(i) + ": ", 160, y)
         v.Set("0.0")
         analog_inputs.append(v)
     for i in range(joystick.get_numhats()):
-        y = 60 + i * 20
-        v = Value(root, "Hat Input " + str(i) + ": ", 320, y)
+        y = 90 + i * 20
+        v = Value(root, "Index " + str(i) + ": ", 320, y)
         v.Set("0.0")
         hat_inputs.append(v)
 def update_inputs():
